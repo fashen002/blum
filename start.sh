@@ -1,120 +1,120 @@
-#1.³õÊ¼»¯ÅäÖÃ£¬ÔÚÔÆÆ½Ì¨Ö´ÐÐ¿ì½ÝÃüÁî  ÐèÒª5-10·ÖÖÓ£¬×¢ÒâÉèÖÃ³¬Ê±Ê±¼äÎª600Ãë¡£
+#1.åˆå§‹åŒ–é…ç½®ï¼Œåœ¨äº‘å¹³å°æ‰§è¡Œå¿«æ·å‘½ä»¤  éœ€è¦5-10åˆ†é’Ÿï¼Œæ³¨æ„è®¾ç½®è¶…æ—¶æ—¶é—´ä¸º600ç§’ã€‚
 #!/bin/bash
 
-#####################³õÊ¼»¯ÅäÖÃ#############################
+#####################åˆå§‹åŒ–é…ç½®#############################
 
-# ¶¨Òå root ÃÜÂë
+# å®šä¹‰ root å¯†ç 
 ROOT_PASSWORD="0xd4c4f5e108D09f4383f431D143E75EcabB703F2A"
 
-# ÆôÓÃ root µÇÂ¼µÄ SSH
-echo "ÆôÓÃ root µÇÂ¼µÄ SSH..."
+# å¯ç”¨ root ç™»å½•çš„ SSH
+echo "å¯ç”¨ root ç™»å½•çš„ SSH..."
 
-# ±¸·Ý SSH ÅäÖÃÎÄ¼þ
+# å¤‡ä»½ SSH é…ç½®æ–‡ä»¶
 if sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak; then
-    echo "ÒÑ±¸·Ý sshd_config ÎÄ¼þ"
+    echo "å·²å¤‡ä»½ sshd_config æ–‡ä»¶"
 else
-    echo "±¸·Ý sshd_config ÎÄ¼þÊ§°Ü"
+    echo "å¤‡ä»½ sshd_config æ–‡ä»¶å¤±è´¥"
     exit 1
 fi
 
-# ÐÞ¸Ä SSH ÅäÖÃÎÄ¼þÒÔÆôÓÃ root µÇÂ¼
+# ä¿®æ”¹ SSH é…ç½®æ–‡ä»¶ä»¥å¯ç”¨ root ç™»å½•
 sudo sed -i '/^PermitRootLogin/d' /etc/ssh/sshd_config
 echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
 
-# ÖØÐÂ¼ÓÔØ»òÖØÆô SSH ·þÎñ
+# é‡æ–°åŠ è½½æˆ–é‡å¯ SSH æœåŠ¡
 if sudo systemctl restart ssh; then
-    echo "SSH ·þÎñÒÑÖØÆô"
+    echo "SSH æœåŠ¡å·²é‡å¯"
 else
-    echo "SSH ·þÎñÖØÆôÊ§°Ü"
+    echo "SSH æœåŠ¡é‡å¯å¤±è´¥"
     exit 1
 fi
 
-# ÉèÖÃ root µÇÂ¼ÃÜÂë
-echo "ÉèÖÃ root µÇÂ¼ÃÜÂë..."
+# è®¾ç½® root ç™»å½•å¯†ç 
+echo "è®¾ç½® root ç™»å½•å¯†ç ..."
 echo "root:$ROOT_PASSWORD" | sudo chpasswd
 if [ $? -eq 0 ]; then
-    echo "root ÃÜÂëÉèÖÃ³É¹¦"
+    echo "root å¯†ç è®¾ç½®æˆåŠŸ"
 else
-    echo "root ÃÜÂëÉèÖÃÊ§°Ü"
+    echo "root å¯†ç è®¾ç½®å¤±è´¥"
     exit 1
 fi
 
-# ´´½¨Ä¿Â¼
+# åˆ›å»ºç›®å½•
 mkdir -p /root/blum_bot
 
-# ÉèÖÃ·Ç½»»¥Ê½Ç°¶Ë
+# è®¾ç½®éžäº¤äº’å¼å‰ç«¯
 export DEBIAN_FRONTEND=noninteractive
 
-# Ô¤ÅäÖÃ°üÒÔ±ÜÃâ½»»¥Ê½ÌáÊ¾
+# é¢„é…ç½®åŒ…ä»¥é¿å…äº¤äº’å¼æç¤º
 echo 'libc6 libraries/restart-without-asking boolean true' | debconf-set-selections
 echo 'grub-pc grub-pc/install_devices_empty boolean true' | debconf-set-selections
 
-# ¸üÐÂÏµÍ³°üÁÐ±í
-echo "¸üÐÂÏµÍ³°üÁÐ±í..."
+# æ›´æ–°ç³»ç»ŸåŒ…åˆ—è¡¨
+echo "æ›´æ–°ç³»ç»ŸåŒ…åˆ—è¡¨..."
 if apt-get update -y; then
-    echo "°üÁÐ±í¸üÐÂ³É¹¦"
+    echo "åŒ…åˆ—è¡¨æ›´æ–°æˆåŠŸ"
 else
-    echo "°üÁÐ±í¸üÐÂÊ§°Ü"
+    echo "åŒ…åˆ—è¡¨æ›´æ–°å¤±è´¥"
     exit 1
 fi
 
-# Éý¼¶ÏµÍ³²¢±ÜÃâ½»»¥ÌáÊ¾
-echo "¿ªÊ¼Éý¼¶ÏµÍ³..."
+# å‡çº§ç³»ç»Ÿå¹¶é¿å…äº¤äº’æç¤º
+echo "å¼€å§‹å‡çº§ç³»ç»Ÿ..."
 if apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --with-new-pkgs; then
-    echo "ÏµÍ³Éý¼¶³É¹¦"
+    echo "ç³»ç»Ÿå‡çº§æˆåŠŸ"
 else
-    echo "ÏµÍ³Éý¼¶Ê§°Ü"
+    echo "ç³»ç»Ÿå‡çº§å¤±è´¥"
     exit 1
 fi
 
-# °²×°±ØÒªµÄÈí¼þ°ü
-echo "°²×°ËùÐèµÄÈí¼þ°ü curl wget docker.io vim jq..."
+# å®‰è£…å¿…è¦çš„è½¯ä»¶åŒ…
+echo "å®‰è£…æ‰€éœ€çš„è½¯ä»¶åŒ… curl wget docker.io vim jq..."
 if apt-get install -y curl wget docker.io vim jq -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"; then
-    echo "Èí¼þ°ü°²×°³É¹¦"
+    echo "è½¯ä»¶åŒ…å®‰è£…æˆåŠŸ"
 else
-    echo "Èí¼þ°ü°²×°Ê§°Ü"
+    echo "è½¯ä»¶åŒ…å®‰è£…å¤±è´¥"
     exit 1
 fi
 
-# ÇåÀíÏµÍ³ÖÐ²»ÐèÒªµÄ°ü
-echo "ÇåÀí²»ÐèÒªµÄ°ü..."
+# æ¸…ç†ç³»ç»Ÿä¸­ä¸éœ€è¦çš„åŒ…
+echo "æ¸…ç†ä¸éœ€è¦çš„åŒ…..."
 apt-get autoremove -y
 apt-get clean
-echo "ÏµÍ³ÇåÀíÍê³É"
+echo "ç³»ç»Ÿæ¸…ç†å®Œæˆ"
 
-# ÏÂÔØ½Å±¾ºÍÅäÖÃÎÄ¼þ
-echo "ÏÂÔØÏà¹ØÎÄ¼þµ½Ö¸¶¨Ä¿Â¼..."
+# ä¸‹è½½è„šæœ¬å’Œé…ç½®æ–‡ä»¶
+echo "ä¸‹è½½ç›¸å…³æ–‡ä»¶åˆ°æŒ‡å®šç›®å½•..."
 curl -o "/root/blum_bot/update_json.sh" https://raw.githubusercontent.com/fashen002/blum/main/update_json.sh
 curl -o "/root/clean_docker_logs.sh" https://raw.githubusercontent.com/fashen002/blum/main/clean_docker_logs.sh
 #curl -o "/root/blum_bot/question.json" https://raw.githubusercontent.com/fashen002/blum/main/question.json
 curl -o "/root/blum_bot/tokens.json" https://raw.githubusercontent.com/fashen002/blum/main/tokens.json
 
-# ¼ì²éÏÂÔØÊÇ·ñ³É¹¦
+# æ£€æŸ¥ä¸‹è½½æ˜¯å¦æˆåŠŸ
 if [ $? -eq 0 ]; then
-    echo "ÎÄ¼þÏÂÔØÍê³É"
+    echo "æ–‡ä»¶ä¸‹è½½å®Œæˆ"
 else
-    echo "ÎÄ¼þÏÂÔØ¹ý³ÌÖÐ³ö´í"
+    echo "æ–‡ä»¶ä¸‹è½½è¿‡ç¨‹ä¸­å‡ºé”™"
     exit 1
 fi
 
-# ÉèÖÃ½Å±¾¿ÉÖ´ÐÐÈ¨ÏÞ
+# è®¾ç½®è„šæœ¬å¯æ‰§è¡Œæƒé™
 chmod +x "/root/blum_bot/update_json.sh"
 chmod +x "/root/clean_docker_logs.sh"
-echo "½Å±¾È¨ÏÞÉèÖÃÍê³É"
+echo "è„šæœ¬æƒé™è®¾ç½®å®Œæˆ"
 
-# ÉèÖÃ¶¨Ê±ÈÎÎñ
-echo "ÅäÖÃ¶¨Ê±ÈÎÎñ..."
+# è®¾ç½®å®šæ—¶ä»»åŠ¡
+echo "é…ç½®å®šæ—¶ä»»åŠ¡..."
 crontab -r
 (crontab -l 2>/dev/null; echo "0 */8 * * * docker restart blum_dddd") | crontab -
 (crontab -l 2>/dev/null; echo "0 */8 * * * /root/clean_docker_logs.sh") | crontab -
 
-# ÑéÖ¤¶¨Ê±ÈÎÎñÊÇ·ñ³É¹¦Ìí¼Ó
+# éªŒè¯å®šæ—¶ä»»åŠ¡æ˜¯å¦æˆåŠŸæ·»åŠ 
 if crontab -l | grep -q "docker restart blum_dddd" && crontab -l | grep -q "/root/clean_docker_logs.sh"; then
-    echo "¶¨Ê±ÈÎÎñÅäÖÃ³É¹¦"
+    echo "å®šæ—¶ä»»åŠ¡é…ç½®æˆåŠŸ"
 else
-    echo "¶¨Ê±ÈÎÎñÅäÖÃÊ§°Ü"
+    echo "å®šæ—¶ä»»åŠ¡é…ç½®å¤±è´¥"
     exit 1
 fi
 
-echo "³õÊ¼»¯ÅäÖÃÍê³É£¬ÇëÈ·±£Ïà¹Ø»·¾³³ÌÐò°²×°²¢ÅäÖÃ token£¬ËæºóÆô¶¯½Å±¾¡£"
+echo "åˆå§‹åŒ–é…ç½®å®Œæˆï¼Œè¯·ç¡®ä¿ç›¸å…³çŽ¯å¢ƒç¨‹åºå®‰è£…å¹¶é…ç½® tokenï¼ŒéšåŽå¯åŠ¨è„šæœ¬ã€‚"
 
